@@ -24,8 +24,7 @@ class FieldFunctionOptions {
         args = argsWithValues(config.variables, field.arguments);
 
   /// Returns whether or not this object is a reference to a normalized object.
-  bool isReference(Map<String, dynamic> object) =>
-      object.containsKey(_config.referenceKey);
+  bool isReference(Map<String, dynamic> object) => object.containsKey(_config.referenceKey);
 
   /// Returns a reference for the given object
   Map<String, dynamic> toReference(Map<String, dynamic> object) => {
@@ -51,6 +50,7 @@ class FieldFunctionOptions {
           allowPartialData: true,
           allowDanglingReference: true,
           possibleTypes: _config.possibleTypes,
+          skipNormalizationTypenames: _config.skipNormalizationTypenames,
         ),
       ) as T?;
 }

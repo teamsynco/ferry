@@ -36,6 +36,7 @@ void normalizeOperation({
   bool acceptPartialData = true,
   String referenceKey = kDefaultReferenceKey,
   Map<String, Set<String>> possibleTypes = const {},
+  Set<String> skipNormalizationTypenames = const {},
 }) {
   if (addTypename) {
     document = transform(
@@ -68,6 +69,7 @@ void normalizeOperation({
     allowPartialData: acceptPartialData,
     allowDanglingReference: false,
     possibleTypes: possibleTypes,
+    skipNormalizationTypenames: skipNormalizationTypenames,
   );
 
   write(

@@ -30,6 +30,7 @@ bool validateOperationDataStructure({
   Map<String, dynamic> variables = const {},
   bool addTypename = false,
   bool handleException = false,
+  Set<String> skipNormalizationTypenames = const {},
 }) {
   return _validateSelectionSet(
     document: document,
@@ -39,6 +40,7 @@ bool validateOperationDataStructure({
     variables: variables,
     addTypename: addTypename,
     handleException: handleException,
+    skipNormalizationTypenames: skipNormalizationTypenames,
   );
 }
 
@@ -58,6 +60,7 @@ bool validateFragmentDataStructure({
   Map<String, dynamic> variables = const {},
   bool addTypename = false,
   bool handleException = false,
+  Set<String> skipNormalizationTypenames = const {},
 }) {
   return _validateSelectionSet(
     document: document,
@@ -71,6 +74,7 @@ bool validateFragmentDataStructure({
     variables: variables,
     addTypename: addTypename,
     handleException: handleException,
+    skipNormalizationTypenames: skipNormalizationTypenames,
   );
 }
 
@@ -86,6 +90,7 @@ bool _validateSelectionSet({
   required Map<String, dynamic> variables,
   required bool addTypename,
   required bool handleException,
+  required Set<String> skipNormalizationTypenames,
 }) {
   if (data == null) {
     if (handleException) {
@@ -112,6 +117,7 @@ bool _validateSelectionSet({
     allowPartialData: false,
     allowDanglingReference: false,
     possibleTypes: const {},
+    skipNormalizationTypenames: skipNormalizationTypenames,
   );
   try {
     return denormalizeNode(

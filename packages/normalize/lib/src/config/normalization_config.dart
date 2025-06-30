@@ -31,6 +31,9 @@ class NormalizationConfig {
   /// A map from an interface/union to possible types.
   final Map<String, Set<String>> possibleTypes;
 
+  /// A set of typenames to skip normalization for.
+  final Set<String> skipNormalizationTypenames;
+
   const NormalizationConfig({
     required this.read,
     required this.variables,
@@ -42,5 +45,6 @@ class NormalizationConfig {
     required this.allowPartialData,
     required this.allowDanglingReference,
     required this.possibleTypes,
+    required this.skipNormalizationTypenames,
   });
 }

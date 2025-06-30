@@ -36,6 +36,7 @@ Map<String, dynamic>? denormalizeFragment({
   bool allowDanglingReference = false,
   String referenceKey = kDefaultReferenceKey,
   Map<String, Set<String>> possibleTypes = const {},
+  Set<String> skipNormalizationTypenames = const {},
 }) {
   if (addTypename) {
     document = transform(
@@ -75,6 +76,7 @@ Map<String, dynamic>? denormalizeFragment({
     allowPartialData: returnPartialData,
     allowDanglingReference: allowDanglingReference,
     possibleTypes: possibleTypes,
+    skipNormalizationTypenames: skipNormalizationTypenames,
   );
 
   try {

@@ -31,6 +31,7 @@ Map<String, dynamic>? denormalizeOperation({
   bool handleException = true,
   String referenceKey = kDefaultReferenceKey,
   Map<String, Set<String>> possibleTypes = const {},
+  Set<String> skipNormalizationTypenames = const {},
 }) {
   if (addTypename) {
     document = transform(
@@ -60,6 +61,7 @@ Map<String, dynamic>? denormalizeOperation({
     allowPartialData: returnPartialData,
     allowDanglingReference: allowDanglingReference,
     possibleTypes: possibleTypes,
+    skipNormalizationTypenames: skipNormalizationTypenames,
   );
 
   try {

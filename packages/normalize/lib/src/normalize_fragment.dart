@@ -40,6 +40,7 @@ void normalizeFragment({
   String referenceKey = kDefaultReferenceKey,
   bool acceptPartialData = true,
   Map<String, Set<String>> possibleTypes = const {},
+  Set<String> skipNormalizationTypenames = const {},
 }) {
   // Always add typenames to ensure data is stored with typename
   document = transform(
@@ -78,6 +79,7 @@ void normalizeFragment({
     allowPartialData: acceptPartialData,
     allowDanglingReference: false,
     possibleTypes: possibleTypes,
+    skipNormalizationTypenames: skipNormalizationTypenames,
   );
 
   final dataId = resolveDataId(

@@ -46,6 +46,12 @@ Object? normalizeNode({
     if (dataId != null) existingNormalizedData = config.read(dataId);
 
     final typename = dataForNode['__typename'];
+
+    if (typename == null || config.skipNormalizationTypenames.contains(typename)) {
+      // Return the map directly without normalization
+      return dataForNode;
+    }
+
     final typePolicy = config.typePolicies[typename];
 
     final subNodes = expandFragments(
