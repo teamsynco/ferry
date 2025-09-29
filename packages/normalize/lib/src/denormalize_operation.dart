@@ -36,7 +36,7 @@ Map<String, dynamic>? denormalizeOperation({
   if (addTypename) {
     document = transform(
       document,
-      [AddTypenameVisitor()],
+      const [AddTypenameVisitor()],
     );
   }
 

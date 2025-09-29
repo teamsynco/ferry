@@ -7,7 +7,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:ferry_test_graphql2/schema/__generated__/serializers.gql.dart'
     as _i1;
-import 'package:gql_code_builder/src/serializers/default_scalar_serializer.dart'
+import 'package:gql_code_builder_serializers/gql_code_builder_serializers.dart'
     as _i2;
 
 part 'schema.schema.gql.g.dart';
@@ -46,7 +46,7 @@ abstract class GReviewInput
     implements Built<GReviewInput, GReviewInputBuilder> {
   GReviewInput._();
 
-  factory GReviewInput([Function(GReviewInputBuilder b) updates]) =
+  factory GReviewInput([void Function(GReviewInputBuilder b) updates]) =
       _$GReviewInput;
 
   int get stars;
@@ -70,7 +70,8 @@ abstract class GReviewInput
 abstract class GColorInput implements Built<GColorInput, GColorInputBuilder> {
   GColorInput._();
 
-  factory GColorInput([Function(GColorInputBuilder b) updates]) = _$GColorInput;
+  factory GColorInput([void Function(GColorInputBuilder b) updates]) =
+      _$GColorInput;
 
   int get red;
   int get green;

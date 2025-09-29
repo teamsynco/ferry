@@ -15,7 +15,8 @@ abstract class GPokemonDetailData
     implements Built<GPokemonDetailData, GPokemonDetailDataBuilder> {
   GPokemonDetailData._();
 
-  factory GPokemonDetailData([Function(GPokemonDetailDataBuilder b) updates]) =
+  factory GPokemonDetailData(
+          [void Function(GPokemonDetailDataBuilder b) updates]) =
       _$GPokemonDetailData;
 
   static void _initializeBuilder(GPokemonDetailDataBuilder b) =>
@@ -46,7 +47,7 @@ abstract class GPokemonDetailData_pokemon
   GPokemonDetailData_pokemon._();
 
   factory GPokemonDetailData_pokemon(
-          [Function(GPokemonDetailData_pokemonBuilder b) updates]) =
+          [void Function(GPokemonDetailData_pokemonBuilder b) updates]) =
       _$GPokemonDetailData_pokemon;
 
   static void _initializeBuilder(GPokemonDetailData_pokemonBuilder b) =>
@@ -56,20 +57,19 @@ abstract class GPokemonDetailData_pokemon
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   @override
-  GPokemonDetailData_pokemon_height? get height;
-  @override
-  GPokemonDetailData_pokemon_weight? get weight;
-  @override
   int get id;
   @override
   String get name;
   @override
   String get avatar;
+  @override
+  GPokemonDetailData_pokemon_height? get height;
+  @override
+  GPokemonDetailData_pokemon_weight? get weight;
   BuiltList<GPokemonDetailData_pokemon_stats?>? get stats;
   static Serializer<GPokemonDetailData_pokemon> get serializer =>
       _$gPokemonDetailDataPokemonSerializer;
 
-  @override
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GPokemonDetailData_pokemon.serializer,
         this,
@@ -90,7 +90,7 @@ abstract class GPokemonDetailData_pokemon_height
   GPokemonDetailData_pokemon_height._();
 
   factory GPokemonDetailData_pokemon_height(
-          [Function(GPokemonDetailData_pokemon_heightBuilder b) updates]) =
+          [void Function(GPokemonDetailData_pokemon_heightBuilder b) updates]) =
       _$GPokemonDetailData_pokemon_height;
 
   static void _initializeBuilder(GPokemonDetailData_pokemon_heightBuilder b) =>
@@ -104,7 +104,6 @@ abstract class GPokemonDetailData_pokemon_height
   static Serializer<GPokemonDetailData_pokemon_height> get serializer =>
       _$gPokemonDetailDataPokemonHeightSerializer;
 
-  @override
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GPokemonDetailData_pokemon_height.serializer,
         this,
@@ -126,7 +125,7 @@ abstract class GPokemonDetailData_pokemon_weight
   GPokemonDetailData_pokemon_weight._();
 
   factory GPokemonDetailData_pokemon_weight(
-          [Function(GPokemonDetailData_pokemon_weightBuilder b) updates]) =
+          [void Function(GPokemonDetailData_pokemon_weightBuilder b) updates]) =
       _$GPokemonDetailData_pokemon_weight;
 
   static void _initializeBuilder(GPokemonDetailData_pokemon_weightBuilder b) =>
@@ -140,7 +139,6 @@ abstract class GPokemonDetailData_pokemon_weight
   static Serializer<GPokemonDetailData_pokemon_weight> get serializer =>
       _$gPokemonDetailDataPokemonWeightSerializer;
 
-  @override
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GPokemonDetailData_pokemon_weight.serializer,
         this,
@@ -161,7 +159,7 @@ abstract class GPokemonDetailData_pokemon_stats
   GPokemonDetailData_pokemon_stats._();
 
   factory GPokemonDetailData_pokemon_stats(
-          [Function(GPokemonDetailData_pokemon_statsBuilder b) updates]) =
+          [void Function(GPokemonDetailData_pokemon_statsBuilder b) updates]) =
       _$GPokemonDetailData_pokemon_stats;
 
   static void _initializeBuilder(GPokemonDetailData_pokemon_statsBuilder b) =>

@@ -1,3 +1,31 @@
+## 0.6.1
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
+## 0.6.1-dev.0
+
+ - **FEAT**(ferry_store): add flush method to allow persistent stores to write pending data to disk.
+
+## 0.6.0
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
+## 0.6.0-dev.1
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **CHORE**(deps): upgrade rxdart to v0.28.0 (#612).
+
+## 0.6.0-dev.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**(ferry_generator): update to gql_code_builders 0.12.0. this extracted the common serializers to a separate package. clients need to add gql_code_builder_serializers to their dependencies if they use ferry_generator. (#601).
+
+## 0.5.3+1
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
 ## 0.5.3-dev.0+1
 
  - **DOCS**: add topics (#548).

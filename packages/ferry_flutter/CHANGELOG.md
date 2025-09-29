@@ -1,3 +1,43 @@
+## 0.9.1-dev.4
+
+ - Update a dependency to the latest release.
+
+## 0.9.1-dev.3
+
+ - Update a dependency to the latest release.
+
+## 0.9.1-dev.2
+
+ - Update a dependency to the latest release.
+
+## 0.9.1-dev.0+2
+
+ - Update a dependency to the latest release.
+
+## 0.9.1+1
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
+## 0.9.1
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
+## 0.9.1-dev.1
+
+ - Update a dependency to the latest release.
+
+## 0.9.1-dev.0+1
+
+ - Update a dependency to the latest release.
+
+## 0.9.1
+
+- Update a dependency to the latest release.
+
+## 0.9.0-dev.8
+
+ - Update a dependency to the latest release.
+
 ## 0.9.0-dev.7
 
  - Update a dependency to the latest release.

@@ -41,7 +41,7 @@ void normalizeOperation({
   if (addTypename) {
     document = transform(
       document,
-      [AddTypenameVisitor()],
+      const [AddTypenameVisitor()],
     );
   }
 

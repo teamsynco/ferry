@@ -46,7 +46,7 @@ class GraphqlBuilder implements Builder {
   @override
   FutureOr<void> build(BuildStep buildStep) async {
     SourceNode? schema;
-    AssetId? _schemaId;
+    late AssetId _schemaId;
     final doc = await readDocument(buildStep, config.sourceExtension);
     final docPackage = buildStep.inputId.package;
     final docDirPath = p.dirname(buildStep.inputId.path);
@@ -82,22 +82,35 @@ class GraphqlBuilder implements Builder {
     final triStateValueConfig = config.triStateOptionalsConfig;
 
     final schemaOutputAsset =
-        outputAssetId(_schemaId!, schemaExtension, config.outputDir);
+        outputAssetId(_schemaId, schemaExtension, config.outputDir);
 
     final schemaUrl = schemaOutputAsset.uri.toString();
-    final schemaAllocator = GqlAllocator(
-      buildStep.inputId.uri.toString(),
-      config.sourceExtension,
-      outputAssetId(buildStep.inputId, schemaExtension, config.outputDir)
-          .uri
-          .toString(),
-      schemaUrl,
-      config.outputDir,
-    );
-
-    final varAllocator = schemaAllocator;
+    final serializerOutputAsset =
+        AssetId(buildStep.inputId.package, schemaOutputAsset.path);
+    final serializerUrl = serializerOutputAsset.uri.toString();
 
     final dataToVarsMode = config.dataToJsonMode;
+
+    Allocator createAllocator(String extension) {
+      return GqlAllocator(
+        buildStep.inputId.uri.toString(),
+        config.sourceExtension,
+        outputAssetId(buildStep.inputId, extension, config.outputDir)
+            .uri
+            .toString(),
+        schemaUrl,
+        serializerUrl,
+        config.outputDir,
+      );
+    }
+
+    final allocators = {
+      astExtension: createAllocator(astExtension),
+      dataExtension: createAllocator(dataExtension),
+      varExtension: createAllocator(varExtension),
+      reqExtension: createAllocator(reqExtension),
+      schemaExtension: createAllocator(schemaExtension),
+    };
 
     final libs = <String, Library>{
       astExtension: buildAstLibrary(doc),
@@ -114,38 +127,33 @@ class GraphqlBuilder implements Builder {
           addTypenames(schema),
           p.basename(generatedFilePath(buildStep.inputId, varExtension)),
           config.typeOverrides,
-          varAllocator,
-          triStateValueConfig),
+          triStateValueConfig,
+          config.shouldGenerateVarsCreateFactories),
       reqExtension: buildReqLibrary(
         doc,
         p.basename(generatedFilePath(buildStep.inputId, reqExtension)),
         dataToVarsMode,
       ),
       schemaExtension: buildSchemaLibrary(
-          doc,
-          p.basename(generatedFilePath(buildStep.inputId, schemaExtension)),
-          config.typeOverrides,
-          config.enumFallbackConfig,
-          generatePossibleTypesMap: config.shouldGeneratePossibleTypes,
-          allocator: schemaAllocator,
-          triStateValueConfig: triStateValueConfig),
+        doc,
+        p.basename(generatedFilePath(buildStep.inputId, schemaExtension)),
+        config.typeOverrides,
+        config.enumFallbackConfig,
+        generatePossibleTypesMap: config.shouldGeneratePossibleTypes,
+        allocator: allocators[schemaExtension]!,
+        triStateValueConfig: triStateValueConfig,
+        generateVarsCreateFactories: config.shouldGenerateVarsCreateFactories,
+      ),
     };
 
     for (var entry in libs.entries) {
       final generatedAsset =
           outputAssetId(buildStep.inputId, entry.key, config.outputDir);
-      final schemaOutputAsset =
-          outputAssetId(_schemaId, schemaExtension, config.outputDir);
 
-      final allocator = GqlAllocator(
-        buildStep.inputId.uri.toString(),
-        config.sourceExtension,
-        generatedAsset.uri.toString(),
-        schemaOutputAsset.uri.toString(),
-        config.outputDir,
-      );
+      final allocator = allocators[entry.key]!;
 
-      await writeDocument(generatedAsset, entry.value, allocator, buildStep);
+      await writeDocument(
+          generatedAsset, entry.value, allocator, buildStep, config.format);
     }
   }
 }

@@ -13,7 +13,6 @@ abstract class GNestedFragment {
   int get id;
   String get name;
   String get avatar;
-  Map<String, dynamic> toJson();
 }
 
 abstract class GNestedFragmentData
@@ -23,7 +22,8 @@ abstract class GNestedFragmentData
   GNestedFragmentData._();
 
   factory GNestedFragmentData(
-      [Function(GNestedFragmentDataBuilder b) updates]) = _$GNestedFragmentData;
+          [void Function(GNestedFragmentDataBuilder b) updates]) =
+      _$GNestedFragmentData;
 
   static void _initializeBuilder(GNestedFragmentDataBuilder b) =>
       b..G__typename = 'Pokemon';
@@ -40,7 +40,6 @@ abstract class GNestedFragmentData
   static Serializer<GNestedFragmentData> get serializer =>
       _$gNestedFragmentDataSerializer;
 
-  @override
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GNestedFragmentData.serializer,
         this,
@@ -64,20 +63,16 @@ abstract class GPokemonCard implements GNestedFragment {
   String get avatar;
   GPokemonCard_height? get height;
   GPokemonCard_weight? get weight;
-  @override
-  Map<String, dynamic> toJson();
 }
 
 abstract class GPokemonCard_height {
   String get G__typename;
   String? get in_meter;
-  Map<String, dynamic> toJson();
 }
 
 abstract class GPokemonCard_weight {
   String get G__typename;
   String? get in_kg;
-  Map<String, dynamic> toJson();
 }
 
 abstract class GPokemonCardData
@@ -87,7 +82,7 @@ abstract class GPokemonCardData
         GNestedFragment {
   GPokemonCardData._();
 
-  factory GPokemonCardData([Function(GPokemonCardDataBuilder b) updates]) =
+  factory GPokemonCardData([void Function(GPokemonCardDataBuilder b) updates]) =
       _$GPokemonCardData;
 
   static void _initializeBuilder(GPokemonCardDataBuilder b) =>
@@ -109,7 +104,6 @@ abstract class GPokemonCardData
   static Serializer<GPokemonCardData> get serializer =>
       _$gPokemonCardDataSerializer;
 
-  @override
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GPokemonCardData.serializer,
         this,
@@ -129,7 +123,7 @@ abstract class GPokemonCardData_height
   GPokemonCardData_height._();
 
   factory GPokemonCardData_height(
-          [Function(GPokemonCardData_heightBuilder b) updates]) =
+          [void Function(GPokemonCardData_heightBuilder b) updates]) =
       _$GPokemonCardData_height;
 
   static void _initializeBuilder(GPokemonCardData_heightBuilder b) =>
@@ -143,7 +137,6 @@ abstract class GPokemonCardData_height
   static Serializer<GPokemonCardData_height> get serializer =>
       _$gPokemonCardDataHeightSerializer;
 
-  @override
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GPokemonCardData_height.serializer,
         this,
@@ -163,7 +156,7 @@ abstract class GPokemonCardData_weight
   GPokemonCardData_weight._();
 
   factory GPokemonCardData_weight(
-          [Function(GPokemonCardData_weightBuilder b) updates]) =
+          [void Function(GPokemonCardData_weightBuilder b) updates]) =
       _$GPokemonCardData_weight;
 
   static void _initializeBuilder(GPokemonCardData_weightBuilder b) =>
@@ -177,7 +170,6 @@ abstract class GPokemonCardData_weight
   static Serializer<GPokemonCardData_weight> get serializer =>
       _$gPokemonCardDataWeightSerializer;
 
-  @override
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
         GPokemonCardData_weight.serializer,
         this,

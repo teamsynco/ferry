@@ -41,7 +41,7 @@ Map<String, dynamic>? denormalizeFragment({
   if (addTypename) {
     document = transform(
       document,
-      [AddTypenameVisitor()],
+      const [AddTypenameVisitor()],
     );
   }
   final fragmentMap = getFragmentMap(document);

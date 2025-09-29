@@ -15,6 +15,7 @@ class BuilderConfig {
   final List<AssetId>? schemaIds;
   final bool shouldAddTypenames;
   final bool shouldGeneratePossibleTypes;
+  final bool shouldGenerateVarsCreateFactories;
   final Map<String, Reference> typeOverrides;
   final Set<Reference> customSerializers;
   final EnumFallbackConfig enumFallbackConfig;
@@ -24,6 +25,7 @@ class BuilderConfig {
   final DataClassConfig dataClassConfig;
   final TriStateValueConfig triStateOptionalsConfig;
   final DataToJsonMode dataToJsonMode;
+  final bool format;
 
   BuilderConfig(Map<String, dynamic> config)
       : schemaId = config['schema'] == null
@@ -33,6 +35,8 @@ class BuilderConfig {
             ?.map((dynamic schema) => AssetId.parse(schema as String))
             .toList(),
         shouldAddTypenames = config['add_typenames'] ?? true,
+        shouldGenerateVarsCreateFactories =
+            config['vars_create_factories'] ?? false,
         typeOverrides = _getTypeOverrides(config['type_overrides']),
         shouldGeneratePossibleTypes =
             config['generate_possible_types_map'] ?? true,
@@ -43,7 +47,8 @@ class BuilderConfig {
         whenExtensionConfig = _getWhenExtensionConfig(config),
         dataClassConfig = _getDataClassConfig(config),
         triStateOptionalsConfig = _getTriStateOptionalsConfig(config),
-        dataToJsonMode = getDataToJsonModeFromConfig(config);
+        dataToJsonMode = getDataToJsonModeFromConfig(config),
+        format = config['format'] ?? true;
 }
 
 DataClassConfig _getDataClassConfig(Map<String, dynamic> config) {

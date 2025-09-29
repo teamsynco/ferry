@@ -102,7 +102,7 @@ bool _validateSelectionSet({
   if (addTypename) {
     document = transform(
       document,
-      [AddTypenameVisitor()],
+      const [AddTypenameVisitor()],
     );
   }
   final fragmentMap = getFragmentMap(document);

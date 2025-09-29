@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:isolate';
+
 import 'package:ferry/ferry.dart';
 import 'package:ferry/src/isolate/isolate_commands.dart';
 import 'package:ferry/src/isolate/request_response_message.dart';
+import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
 
 /// a top-level or static function,
@@ -20,11 +22,9 @@ typedef InitClient<InitParams> = Future<TypedLinkWithCacheAndRequestController>
 /// A [TypedLink} that executes requests of a [Client] in
 /// another isolate to avoid jank on heavy requests
 class IsolateClient extends TypedLink {
-  late final ReceivePort _globalReceivePort;
-
   late final ReceivePort? _messageHandlerReceivePort;
 
-  late final SendPort _commandSendPort;
+  late final SendPort commandSendPort;
 
   IsolateClient._();
 
@@ -50,7 +50,7 @@ class IsolateClient extends TypedLink {
   }) async {
     final client = IsolateClient._();
 
-    client._globalReceivePort =
+    final mainReceivePort =
         ReceivePort('package:ferry/ferry_isolate.dart:main');
 
     // setup custom messages from isolate -> main if necessary
@@ -65,18 +65,22 @@ class IsolateClient extends TypedLink {
     final completer = Completer();
 
     // the first message
-    unawaited(client._globalReceivePort.first.then((value) {
-      assert(value is SendPort,
-          'internal error: the first message sent must be the SendPort');
-      client._commandSendPort = value;
-      completer.complete();
-    }));
+    unawaited(
+      mainReceivePort.first.then((value) {
+        assert(value is SendPort,
+            'internal error: the first message sent must be the SendPort');
+        client.commandSendPort = value;
+        completer.complete();
+      }).whenComplete(() {
+        mainReceivePort.close();
+      }),
+    );
 
     unawaited(Isolate.spawn<_IsolateInit<InitParams>>(
       _isolateClientEntryPoint,
       _IsolateInit<InitParams>(
         initClient,
-        client._globalReceivePort.sendPort,
+        mainReceivePort.sendPort,
         client._messageHandlerReceivePort?.sendPort,
         params,
       ),
@@ -87,6 +91,53 @@ class IsolateClient extends TypedLink {
 
     await completer.future;
 
+    return client;
+  }
+
+  /// Create a new [IsolateClient] by attaching to an already existing [Client]
+  /// running in another Isolate.
+  ///
+  /// This is intended for the 'Add-to-app' use case and especially the Multiple
+  /// Flutters scenario where each Flutter instance is run in a separate
+  /// isolate.
+  ///
+  /// After the IsolateClient has been created in the first FlutterEngine the
+  /// [commandSendPort] can be stored in an IsolateNameServer. In subsequent
+  /// engines from the same FlutterEngineGroup, the port can be looked up
+  /// from the IsolateNameServer and supplied to this function.
+  ///
+  /// Example:
+  /// ```dart
+  /// void main() async {
+  ///   WidgetsFlutterBinding.ensureInitialized();
+  ///
+  ///   final gqlClient = await IsolateClient.create(
+  ///     ...
+  ///     messageHandler: (msg) {
+  ///       ...
+  ///     }
+  ///   );
+  ///   IsolateNameServer.registerPortWithName(gqlClient.commandSendPort, "name");
+  /// }
+  ///
+  /// @pragma("vm:entry-point")
+  /// void other() async {
+  ///   WidgetsFlutterBinding.ensureInitialized();
+  ///
+  ///   final port = IsolateNameServer.lookupPortByName("name")!;
+  ///   final gqlClient = IsolateClient.attach(port);
+  ///
+  ///   runApp(...)
+  /// }
+  /// ```
+  ///
+  /// NOTE: all messages from the Client will need to be handled by the
+  /// messageHandler in the Isolate where the client was initially created.
+  @experimental
+  static IsolateClient attach(SendPort commandSendPort) {
+    final client = IsolateClient._();
+    client.commandSendPort = commandSendPort;
+    client._messageHandlerReceivePort = null;
     return client;
   }
 
@@ -113,7 +164,7 @@ class IsolateClient extends TypedLink {
       void Function(T?, Sink<T>) onData) {
     final receivePort = ReceivePort();
 
-    _commandSendPort.send(streamCommandFunc(receivePort));
+    commandSendPort.send(streamCommandFunc(receivePort));
 
     SendPort? cancelPort;
 
@@ -262,17 +313,39 @@ class IsolateClient extends TypedLink {
   @override
   Future<void> dispose() async {
     final receivePort = ReceivePort();
-    _commandSendPort.send(DisposeCommand(receivePort.sendPort));
+    commandSendPort.send(DisposeCommand(receivePort.sendPort));
     await receivePort.first;
     receivePort.close();
-    _globalReceivePort.close();
     _messageHandlerReceivePort?.close();
     return super.dispose();
   }
 
+  /// returns all top-level keys in the cache
+  Future<Iterable<String>> getCacheKeys() {
+    return _handleSingleResponseCommand(
+        (sendPort) => CacheKeysCommand(sendPort));
+  }
+
+  /// evicts to top level selections from the cache
+  /// e.g. a query like
+  /// ```graphql
+  ///  query GetPerson {
+  ///     person(id: "1") {
+  ///        id
+  ///        name
+  ///     }
+  ///  }
+  ///  ```
+  ///  would evict the field `Query`->`person({id:"1"})`
+  ///  Consider calling gcCache() after this to remove orphaned data
+  Future<void> evictOperation(OperationRequest request) {
+    return _handleSingleResponseCommand(
+        (sendPort) => EvictOperationCommand(sendPort, request));
+  }
+
   /// adds a request to the requestController of the client on the isolate
   /// this is useful for re-fetch and pagination
-  /// see https://ferrygraphql.com/docs/pagination
+  /// see https://ferry.gql-dart.dev/docs/pagination
   Future<void> addRequestToRequestController<TData, TVars>(
       OperationRequest<TData, TVars> request) {
     _debugAssertUpdateResultTransferrable(request);
@@ -285,7 +358,7 @@ class IsolateClient extends TypedLink {
   Future<T> _handleSingleResponseCommand<T>(
       IsolateCommand Function(SendPort sendPort) commandBuilder) {
     final receivePort = ReceivePort();
-    _commandSendPort.send(commandBuilder(receivePort.sendPort));
+    commandSendPort.send(commandBuilder(receivePort.sendPort));
     return receivePort.first.then((value) {
       receivePort.close();
       if (value is RequestResponse && value.type == RequestResponseType.error) {
@@ -293,6 +366,11 @@ class IsolateClient extends TypedLink {
       }
       return value as T;
     });
+  }
+
+  /// flushes the store, persisting all pending changes to the disk
+  Future<void> flushStore() {
+    return _handleSingleResponseCommand((sendPort) => FlushCommand(sendPort));
   }
 }
 

@@ -1,3 +1,74 @@
+## 0.4.1-dev.2
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**(ferry_generator): upgrade to latest gql_code_builder (#637).
+ - **BREAKING** **FEAT**(ferry_test_external_schema): update for new gql_code_builder version.
+ - **BREAKING** **FEAT**(ferry_generator): upgrade gql_code_builder to 0.14.0.
+
+## 0.4.1-dev.1
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**(ferry_test_external_schema): update for new gql_code_builder version.
+ - **BREAKING** **FEAT**(ferry_generator): upgrade gql_code_builder to 0.14.0.
+
+## 0.4.1-dev.0
+
+ - **FEAT**(ferry_generator): move to dart_style 3.0.0 (#632).
+
+## 0.4.0
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
+## 0.4.0-dev.0
+
+> Note: This release has breaking changes.
+
+ - **FEAT**(ferry_generator): Passing through builder options to schema builder (#585).
+ - **BREAKING** **FEAT**(ferry_generator): update to gql_code_builders 0.12.0. this extracted the common serializers to a separate package. clients need to add gql_code_builder_serializers to their dependencies if they use ferry_generator. (#601).
+ - **BREAKING** **CHORE**(deps): upgrade rxdart to v0.28.0 (#612).
+
+## 0.3.0
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
+## 0.3.0-dev.4
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **CHORE**(deps): upgrade rxdart to v0.28.0 (#612).
+
+## 0.3.0-dev.3
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**(ferry_generator): update to gql_code_builders 0.12.0. this extracted the common serializers to a separate package. clients need to add gql_code_builder_serializers to their dependencies if they use ferry_generator. (#601).
+
+## 0.3.0-dev.2
+
+ - **FEAT**(ferry_generator): Passing through builder options to schema builder (#585).
+
+## 0.3.0-dev.1
+
+ - Update a dependency to the latest release.
+
+## 0.3.0-dev.0+1
+
+ - Update a dependency to the latest release.
+
+## 0.3.0
+
+ - update generated code
+
+## 0.2.4-dev.5
+
+ - **FEAT**: update generated code.
+
+## 0.2.4-dev.4
+
+ - **FEAT**(vars-builder-generator): Adding gql_code_builder vars builder dep.
+
 ## 0.2.4-dev.3
 
 > Note: This release has breaking changes.

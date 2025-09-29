@@ -1,3 +1,25 @@
+## 0.10.0
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
+## 0.10.0-dev.1
+
+ - **REFACTOR**(normalize): Add const constructor to visitors.
+
+## 0.10.0-dev.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **CHORE**(deps): upgrade rxdart to v0.28.0 (#612).
+
+## 0.9.1
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
+## 0.9.1-dev.0
+
+ - Bump "normalize" to `0.9.1-dev.0`.
+
 ## 0.9.1
 
 ## 0.9.0-dev.0+1

@@ -210,6 +210,12 @@ Supported keys are `when` and `maybeWhen`, and the values are booleans indicatin
 generation of the extension method not.
 By default, both are disabled.
 
+`tristate_optionals`: \[bool\] Whether to use tristate optionals for nullable variables and input types. A Value class is used to represent the three possible states: absence of a value, presence of a value that is null, and presence of a non-null value. This class is used by the generated code for GraphQL variables and input types that are nullable in order to distinguish between the absence of a value and the presence of a null value, typically used for "update" Mutations. Defaults to false.
+
+`vars_create_factories`: \[bool\] Whether to generate an additional factory constructor for the variables class. In contrast to the `built_value` builders, this factory constructor respects nullability for it's parameters. Defaults to false.
+
+`format`: \[bool\] Whether to allow formatting of the generated code. When set to false, adds `// dart format off` directive to the generated files. Defaults to true.
+
 Example:
 
 ```yaml
@@ -224,6 +230,7 @@ Example:
       global_enum_fallbacks: true # add a generated fallback value to all enums
       enum_fallbacks:
          MyEnumType: OTHER   # except for the type 'MyEnumType', use the value 'OTHER' as fallback there
+      format: false  # disable dart formatting for generated code
 
 ```
 
