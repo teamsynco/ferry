@@ -48,7 +48,12 @@ class PickAllocator implements Allocator {
       .map(
         (u) => u.value == null
             ? Directive.import(u.key)
-            : Directive.import(u.key, show: u.value!),
+            : Directive.import(
+                u.key,
+                show: u.value!
+                    .toSet() // de-duplicate symbols to avoid repeated show entries
+                    .toList(),
+              ),
       )
       .followedBy(aliasedImports.entries.map(
         (e) => Directive.import(e.key, as: e.value),

@@ -146,11 +146,15 @@ class SerializerBuilder implements Builder {
       nonBuiltClasses.addAll(externalSchemaClasses.nonBuiltClasses);
     }
 
-    final library = buildSerializerLibrary(
+    // Gather input object classes (convention: names ending with 'Input')
+    final inputObjectClasses = builtClasses.where((c) => (c.name3?.endsWith('Input') ?? false)).toList(growable: false);
+
+    var library = buildFerrySerializerLibrary(
       builtClasses,
       outputFileName.replaceFirst('.gql.dart', '.gql.g.dart'),
       additionalSerializers,
       externalSerializers: externalSerializersExpression,
+      inputObjectClasses: inputObjectClasses,
     );
 
     final allocator = PickAllocator(doNotPick: [
@@ -222,4 +226,86 @@ ClassesToGenerateSerializersFor extractClassesToGenerateSerializersFor(
     builtClasses: builtClasses,
     nonBuiltClasses: nonBuiltClasses,
   );
+}
+
+// Local implementation of serializer library builder with inline addBuilderFactory support
+Library buildFerrySerializerLibrary(
+  Set<ClassElement2> builtClasses,
+  String partDirectiveUrl,
+  Set<Expression> additionalSerializers, {
+  Expression? externalSerializers,
+  required List<ClassElement2> inputObjectClasses,
+}) {
+  // Build the builder base expression: _$serializers.toBuilder()
+  Expression builderExpr = refer(r'_$serializers').property('toBuilder').call([]);
+
+  // Apply additional serializers (OperationSerializer, custom, holder serializer, etc.)
+  builderExpr = builderExpr.withCustomSerializers(additionalSerializers);
+
+  // If there are external serializers, add them
+  if (externalSerializers != null) {
+    builderExpr = builderExpr.cascade('addAll').call([externalSerializers]);
+  }
+
+  // Add explicit addBuilderFactory cascades for each input object list type
+  if (inputObjectClasses.isNotEmpty) {
+    for (final c in inputObjectClasses) {
+      final fullTypeListOfInput = refer('FullType', 'package:built_value/serializer.dart').constInstance([
+        refer('BuiltList', 'package:built_collection/built_collection.dart'),
+        literalConstList([
+          refer('FullType', 'package:built_value/serializer.dart').constInstance([
+            refer(c.name3!, c.library2.uri.toString()),
+          ]),
+        ]),
+      ]);
+
+      final listBuilderFactory = Method((m) {
+        m
+          ..lambda = true
+          ..body = TypeReference((t) => t
+            ..symbol = 'ListBuilder'
+            ..url = 'package:built_collection/built_collection.dart'
+            ..types.add(refer(c.name3!, c.library2.uri.toString()))).call([]).code;
+      }).closure;
+
+      builderExpr = builderExpr.cascade('addBuilderFactory').call([
+        fullTypeListOfInput,
+        listBuilderFactory,
+      ]);
+    }
+  }
+
+  // Add StandardJsonPlugin
+  builderExpr = builderExpr.cascade('addPlugin').call([
+    refer('StandardJsonPlugin', 'package:built_value/standard_json_plugin.dart').call([]),
+  ]);
+
+  // Build library
+  return Library(
+    (b) => b
+      ..directives.add(Directive.part(partDirectiveUrl))
+      ..body.addAll([
+        declareFinal(
+          '_serializersBuilder',
+          type: refer('SerializersBuilder', 'package:built_value/serializer.dart'),
+        ).assign(builderExpr).statement,
+        refer('@SerializersFor', 'package:built_value/serializer.dart').call([
+          literalList(
+            builtClasses.map<Reference>((c) => refer(c.name3!, c.library2.uri.toString())).toList()
+              ..sort((a, b) => a.symbol!.compareTo(b.symbol!)),
+          )
+        ]),
+        declareFinal(
+          'serializers',
+          type: refer('Serializers', 'package:built_value/serializer.dart'),
+        ).assign(refer('_serializersBuilder').property('build').call([])).statement,
+      ]),
+  );
+}
+
+extension FerryExpressionHelpers on Expression {
+  Expression applyIf(bool condition, Expression Function(Expression) wrap) => condition ? wrap(this) : this;
+
+  Expression withCustomSerializers(Set<Expression> customSerializers) =>
+      customSerializers.fold(this, (exp, serializer) => exp.cascade('add').call([serializer]));
 }
